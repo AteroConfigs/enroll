@@ -1,0 +1,8 @@
+<% javascript_tag do -%>
+  var <%= "#{form_items}" %> = [
+    <%= ext_field(:field_label => 'First name', :name => 'app[first_name]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Last name', :name => 'app[last_name]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Notes', :name => 'app[notes]', :xtype => :text_area) %>,
+    <%= ext_field(:field_label => 'Priority type', :name => 'app[priority_type]', :xtype => :text_field) %>
+  ];
+<% end -%>

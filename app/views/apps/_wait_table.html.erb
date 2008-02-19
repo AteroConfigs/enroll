@@ -1,0 +1,30 @@
+<h3>Grade: <%= grade == 0 ? 'kindergarten' : grade %></h3>
+
+<div class="datatable">
+<table style="width:300px;">
+  <tr>
+    <th>APP CODE</th>
+    <th>POSITION</th>
+<!--
+    <th>TYPE</th>
+    <th>STATUS</th>
+    <th>NAME</th>
+-->
+  </tr>
+
+<% for app in apps %>
+  <tr>
+    <td><%= app.code %></td>
+    <td><%= app.wait_list_position %></td>
+<!--
+    <td><% app.txt_type %></td>
+    <td><% app.txt_status %></td>
+    <td><% app.first_name + " " + app.last_name %></td>
+-->
+  </tr>
+<% end %>
+</table>
+
+</div>
+
+

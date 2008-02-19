@@ -1,0 +1,12 @@
+<div id="app-grid"></div>
+<%= ext_datastore_for :app %>
+<% javascript_tag do -%>
+  var app_column_model = new Ext.grid.ColumnModel([
+    {id: 'id', header: "#", width: 20, dataIndex: 'id'},
+    {header: 'First name', dataIndex: 'app[first_name]'},
+    {header: 'Last name', dataIndex: 'app[last_name]'},
+    {header: 'Notes', dataIndex: 'app[notes]'},
+    {header: 'Priority type', dataIndex: 'app[priority_type]'}
+  ]);
+<% end -%>
+<%= ext_grid_for :app, :element => 'app-grid', :page_size => 25, :height => 628, :width => 1024 %>

@@ -1,0 +1,6 @@
+<div id="app-form"></div>
+<%= render :partial => 'form_items', :object => :app_form_items %>
+<%= ext_form_for :app,
+                 :element => 'app-form',
+                 :form_items => :app_form_items,
+                 :mode => :new %>

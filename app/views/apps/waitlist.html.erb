@@ -1,0 +1,9 @@
+<h1>SCCLC WAIT LIST</h1>
+
+<% (0..8).each do | grade | %>
+  <%= render :partial => 'wait_table', 
+    :locals => {:apps =>  @apps[grade], :grade => grade} %>
+<% end %>
+
+
+

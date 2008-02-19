@@ -1,0 +1,143 @@
+/*  
+Theme Name: BrightRoll Corpsite
+Theme URI: http://brightroll.com/
+Description: The default BrightRoll theme based on the famous Bill Tani.
+Version: 1.6
+Author: Dru Nelson
+Author URI: http://brightroll.com/
+
+	Kubrick v1.5
+	 http://binarybonsai.com/kubrick/
+
+	This theme was designed and built by Michael Heilemann,
+	whose blog you will find at http://binarybonsai.com/
+
+	The CSS, XHTML and design is released under GPL:
+	http://www.opensource.org/licenses/gpl-license.php
+
+*/
+
+
+
+body { font-size: 12px; font-family: Helvetica, Geneva, Arial, SunSans-Regular, sans-serif; line-height: 18px; }
+
+/* cool hack to force the scrollbar to appear in firefox - DN */
+html { min-height: 100%; margin-bottom: 1px;
+  background-color: #d0d0e0;
+}
+
+#content {
+  background-color: #d8e4fc;
+  margin: 30px;
+  padding: 20px;
+}
+
+p { }
+
+td { }
+
+a:link { color: #1f4fb4; text-decoration: none; }
+
+a:visited { color: #1f4fb4;  text-decoration: none; }
+
+a:hover { color: #1f4fb4;  text-decoration: underline; }
+
+a:active { }
+nav text { font-size: 11px; font-family: verdana; }
+
+#subnav ul {
+  display: inline;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  margin: 0;
+  padding-left: 0;
+}
+#subnav ul li {
+  list-style: none;
+  display: inline;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  padding-right: 16px;
+}
+
+#subnav a:link, #subnav a:visited {
+  color: #1F4FB4;
+  text-decoration: none;
+}
+#subnav a:hover {
+  color: #1F4FB4;
+  text-decoration: underline;
+}
+
+.current_page_item a:link {
+  color: #000 !important;
+}
+.current_page_item a:visited {
+  color: #000 !important;
+}
+.current_page_item a:hover {
+  color: #000 !important;
+  text-decoration: none !important;
+}
+
+
+#categories_list ul {
+	margin-top: 0;
+	margin-left: 0;
+	list-style-image: url(images/common/bullet.gif);
+        padding-left: 30px;
+}
+#categories_list ul li {
+	padding-top: 0px;
+	padding-bottom: 5px;
+}
+
+.post {
+	margin-right: 35px;
+}
+.home-box {
+	padding-right: 15px;
+}
+
+.datatable table {
+	width: 100%;
+	height: 100%;
+	font-size: 95%;
+ 	clear: both;
+	border-collapse: collapse;
+}
+
+
+.datatable table th,
+.datatable table td {
+  padding: .5em .75em;
+  text-align: left;
+}
+.datatable table th {
+  border-bottom: 1px solid #bbb;
+  background: #e5e5e5;
+  white-space: nowrap;
+  width: 25%;
+}
+.datatable table th.text {
+  width: 50%;
+  text-align: left;
+}
+.datatable table td {
+  border-top: 1px solid #bbb;
+  background: #f9f9f9;
+}
+.datatable table td.text {
+  text-align: left;
+}
+.datatable table .highlight td {
+  background: #fff;
+}
+.datatable p {
+  border-top: 1px solid #bbb;
+  padding: .75em;
+}
+.datatable table .nodata {
+  text-align: center;
+  height: 75%;
+}
