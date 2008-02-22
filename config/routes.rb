@@ -1,4 +1,10 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :users
+  map.resource :session
+  map.signup '/signup', :controller => 'users', :action => 'new'
+  map.login  '/login', :controller => 'session', :action => 'new'
+  map.logout '/logout', :controller => 'session', :action => 'destroy'
+
   map.connect '/waitlist.html', :controller => 'apps', :action => 'waitlist'
 
   map.resources :apps, :collection => { :waitlist => :get }
