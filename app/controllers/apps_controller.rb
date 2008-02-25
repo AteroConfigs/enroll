@@ -17,10 +17,11 @@ class AppsController < ApplicationController
     apps0 = App.find :all
 
     apps1 = apps0.reject { |e| e.txt_status == 'removed' }
+    apps2 = apps1.reject { |e| e.wait_list_position == 0 }
 
     apps = {}
     (0..8).each do | grade |
-      apps[grade] = apps1.select { |e| e.current_grade == grade }.sort_by { |a| a.wait_list_position }
+      apps[grade] = apps2.select { |e| e.current_grade == grade }.sort_by { |a| a.wait_list_position }
     end
 
     @apps = apps
