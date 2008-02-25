@@ -1,12 +1,14 @@
 <div id="app-grid"></div>
-<%= ext_datastore_for :app %>
+<%= ext_datastore_for :app, :additional_columns => ['txt_current_grade', 'txt_status', 'txt_type']  %>
 <% javascript_tag do -%>
   var app_column_model = new Ext.grid.ColumnModel([
     {id: 'id', header: "#", width: 20, dataIndex: 'id'},
     {header: 'First name', dataIndex: 'app[first_name]'},
     {header: 'Last name', dataIndex: 'app[last_name]'},
-    {header: 'Notes', dataIndex: 'app[notes]'},
-    {header: 'Priority type', dataIndex: 'app[priority_type]'}
+    {header: 'Current Grade', dataIndex: 'app[txt_current_grade]'},
+    {header: 'Wait Position', dataIndex: 'app[wait_list_position]'},
+    {header: 'Type Code', dataIndex: 'app[txt_type]'},
+    {header: 'Status', dataIndex: 'app[txt_status]'},
   ]);
 <% end -%>
 <%= ext_grid_for :app, :element => 'app-grid', :page_size => 25, :height => 628, :width => 1024 %>

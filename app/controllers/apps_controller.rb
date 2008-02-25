@@ -8,7 +8,11 @@ class AppsController < ApplicationController
   def index
     respond_to do |format|
       format.html     # index.html.erb (no data required)
-      format.ext_json { render :json => find_apps.to_ext_json(:class => :app, :count => App.count) }
+      format.ext_json { render :json =>
+        find_apps.to_ext_json(:class => :app, 
+                              :count => App.count, 
+                              :ar_options => {:only => [:status, :first_name, :last_name, :wait_list_position, :id ],
+                                              :methods => [:txt_status, :txt_current_grade, :txt_type] } ) }
     end
   end
 
