@@ -156,6 +156,8 @@ module ExtScaffoldCoreExtensions
         collection_path_method = "#{object_name.to_s.pluralize}_path"
         datastore_name = options[:datastore] || "#{object_name}_datastore"
         primary_key = object_name.to_s.classify.constantize.primary_key
+        attrib_map_opts = { :skip_id => true }
+        attrib_map_opts[:additional_columns] = options[:additional_columns] if options[:additional_columns]
         javascript_tag <<-_JS  
           var #{datastore_name} = new Ext.data.Store({
                   proxy: new Ext.data.HttpProxy({
@@ -167,7 +169,7 @@ module ExtScaffoldCoreExtensions
                               id: '#{primary_key}',
                               totalProperty: 'results'
                           },
-                          [ {name: 'id', mapping: '#{primary_key}'}, #{attribute_mappings_for object_name, :skip_id => true} ]),
+                          [ {name: 'id', mapping: '#{primary_key}'}, #{attribute_mappings_for object_name, attrib_map_opts } ]),
                   // turn on remote sorting
                   remoteSort: true,
                   sortInfo: {field: '#{options[:sort_field] || primary_key}', direction: '#{options[:sort_direction] || "ASC"}'}
@@ -213,6 +215,9 @@ module ExtScaffoldCoreExtensions
         def attribute_mappings_for(object_name, options = {})
           object_class = object_name.to_s.classify.constantize
           requested_attributes = object_class.column_names.reject {|c| options[:skip_id] && c == object_class.primary_key}
+          if options[:additional_columns]
+            requested_attributes = requested_attributes + options[:additional_columns]
+          end
           requested_attributes.collect {|c| "{name: '#{object_name}[#{c}]', mapping: '#{c}'}" }.join(',')
         end
 
