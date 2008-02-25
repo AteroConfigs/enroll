@@ -51,6 +51,12 @@ class App < ActiveRecord::Base
     return grade + (App.this_year - grade_in_year)
   end
 
+  def txt_current_grade
+    g = current_grade
+    return 'k' if g == 0
+    g
+  end
+
 end
 
 App.inheritance_column = 'blblblb'
