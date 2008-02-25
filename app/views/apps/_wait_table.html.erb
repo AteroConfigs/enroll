@@ -1,4 +1,4 @@
-<h3>Grade: <%= grade == 0 ? 'kindergarten' : grade %></h3>
+<h3>Grade: <%= grade == 0 ? 'Kindergarten' : grade %></h3>
 
 <div class="datatable">
 <table id="table<%= grade %>"style="width:300px;" class="sortable">
@@ -7,6 +7,9 @@
     <th class="number">APP CODE</th>
     <th class="sortfirstasc number">POSITION</th>
 <!--
+    <th>SEQUENCE #</th>
+    <th>GRADE</th>
+    <th>GRADE IN YEAR</th>
     <th>TYPE</th>
     <th>STATUS</th>
     <th>NAME</th>
@@ -18,6 +21,9 @@
     <td><%= app.code %></td>
     <td><%= app.wait_list_position %></td>
 <!--
+    <td><% app.sequence_number %></td>
+    <td><% app.grade %></td>
+    <td><% app.grade_in_year %></td>
     <td><% app.txt_type %></td>
     <td><% app.txt_status %></td>
     <td><% app.first_name + " " + app.last_name %></td>
