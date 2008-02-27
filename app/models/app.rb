@@ -1,5 +1,9 @@
 class App < ActiveRecord::Base
 
+  def self.ext_additional_attributes
+    return ['txt_current_grade', 'txt_status', 'txt_type']
+  end
+
   def txt_type
     tbl = {
       0 => 'sibling',

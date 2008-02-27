@@ -1,5 +1,5 @@
 <div id="app-grid"></div>
-<%= ext_datastore_for :app, :additional_columns => ['txt_current_grade', 'txt_status', 'txt_type']  %>
+<%= ext_datastore_for :app %>
 <% javascript_tag do -%>
   var app_column_model = new Ext.grid.ColumnModel([
     {id: 'id', header: "#", width: 20, dataIndex: 'id'},
