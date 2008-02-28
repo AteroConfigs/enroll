@@ -40,3 +40,21 @@ module ExtScaffoldCoreExtensions
     end
   end
 end
+
+
+class ActiveRecord::Base
+  class << self
+
+      @@ext_scaffold_attrs = []
+
+      def ext_scaffold_additional_attributes(*attr_names)
+        @@ext_scaffold_attrs = attr_names
+      end
+
+      def ext_scaffold_attrs
+        return @@ext_scaffold_attrs
+      end
+
+  end
+end
+
