@@ -167,7 +167,7 @@ module ExtScaffoldCoreExtensions
                               id: '#{primary_key}',
                               totalProperty: 'results'
                           },
-                          [ {name: 'id', mapping: '#{primary_key}'}, #{attribute_mappings_for object_name, :skip_id => true } ]),
+                          [ {name: 'id', mapping: '#{primary_key}'}, #{attribute_mappings_for object_name, :skip_id => true} ]),
                   // turn on remote sorting
                   remoteSort: true,
                   sortInfo: {field: '#{options[:sort_field] || primary_key}', direction: '#{options[:sort_direction] || "ASC"}'}
