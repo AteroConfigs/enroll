@@ -24,7 +24,6 @@ module ExtScaffoldCoreExtensions
       else
         r = { :results => element_count, element_class.to_s.underscore.pluralize => self }.to_json(options)
       end
-      p r
       return r
     end
 
