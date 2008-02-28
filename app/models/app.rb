@@ -1,8 +1,6 @@
 class App < ActiveRecord::Base
 
-  def self.ext_additional_attributes
-    return ['txt_current_grade', 'txt_status', 'txt_type']
-  end
+  ext_scaffold_additional_attributes :txt_current_grade, :txt_status, :txt_type
 
   def txt_type
     tbl = {
