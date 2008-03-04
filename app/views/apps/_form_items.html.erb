@@ -1,8 +1,95 @@
+
+<%= select(:app, :priority_type,
+                          [ ['sibling', 0],
+                            ['staff', 1],
+                            ['on leave', 2],
+                            ['in district', 3],
+                            ['out of district', 4],
+                            ], {}, {}
+                            ) %>
+
+<%= select(:app, :status,
+                          [ ['wait', 0],
+                            ['offer', 1],
+                            ['declined', 2],
+                            ['attending', 3],
+                            ['on leave', 4],
+                            ['left', 5],
+                            ['graduated', 6],
+                            ['removed', 7],
+                            ], {}, {}
+                            ) %>
+
+<%= select(:app, :current_grade,
+                          [ ['K', 0],
+                            ['1', 1],
+                            ['2', 2],
+                            ['3', 3],
+                            ['4', 4],
+                            ['5', 5],
+                            ['6', 6],
+                            ['7', 7],
+                            ['8', 8],
+                            ], {}, {}
+                            ) %>
+
+
 <% javascript_tag do -%>
   var <%= "#{form_items}" %> = [
-    <%= ext_field(:field_label => 'First name', :name => 'app[first_name]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Application Date', :name => 'app[application_date]', :xtype => :date_select) %>,
+    <%= ext_field(:field_label => 'Application Code', :name => 'app[code]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Wait List Position', :name => 'app[wait_list_position]', :xtype => :text_field) %>,
+
     <%= ext_field(:field_label => 'Last name', :name => 'app[last_name]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'First name', :name => 'app[first_name]', :xtype => :text_field) %>,
+
+    <%= ext_field(:field_label => 'Address 1', :name => 'app[street_1]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Address 2', :name => 'app[street_2]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'City', :name => 'app[city]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'State', :name => 'app[state]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Zip', :name => 'app[zip]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Birthdate', :name => 'app[birthdate]', :xtype => :date_select) %>,
+
+    <%= ext_field(:field_label => 'Father First name', :name => 'app[father_first_name]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Father Last name', :name => 'app[father_last_name]', :xtype => :text_field) %>,
+
+    <%= ext_field(:field_label => 'Father Address 1', :name => 'app[father_street_1]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Father Address 2', :name => 'app[father_street_2]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Father City', :name => 'app[father_city]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Father State', :name => 'app[father_state]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Father Zip', :name => 'app[father_zip]', :xtype => :text_field) %>,
+
+    <%= ext_field(:field_label => 'Father Home Phone', :name => 'app[father_phone_home]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Father Daytime Phone', :name => 'app[father_phone_work]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Father Email Home', :name => 'app[father_email_home]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Father Email Work', :name => 'app[father_email_work]', :xtype => :text_field) %>,
+
+
+    <%= ext_field(:field_label => 'Mother First name', :name => 'app[mother_first_name]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Mother Last name', :name => 'app[mother_last_name]', :xtype => :text_field) %>,
+
+    <%= ext_field(:field_label => 'Mother Address 1', :name => 'app[mother_street_1]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Mother Address 2', :name => 'app[mother_street_2]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Mother City', :name => 'app[mother_city]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Mother State', :name => 'app[mother_state]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Mother Zip', :name => 'app[mother_zip]', :xtype => :text_field) %>,
+
+    <%= ext_field(:field_label => 'Mother Home Phone', :name => 'app[mother_phone_home]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Mother Daytime Phone', :name => 'app[mother_phone_work]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Mother Email Home', :name => 'app[mother_email_home]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Mother Email Work', :name => 'app[mother_email_work]', :xtype => :text_field) %>,
+
+    <%= ext_field(:field_label => 'Sibling Names', :name => 'app[siblings]', :xtype => :text_field) %>,
+    <%= ext_field(:field_label => 'Orientation Date', :name => 'app[orientation_date]', :xtype => :date_select) %>,
+    <%= ext_field(:field_label => 'Tour Date', :name => 'app[tour_date]', :xtype => :date_select) %>,
+
+    <%= ext_select_field(:field_label => 'Type', :name => 'app[priority_type]', :existing_select => 'app_priority_type') %>,
+    <%= ext_select_field(:field_label => 'Status', :name => 'app[status]', :existing_select => 'app_status') %>,
+    <%= ext_select_field(:field_label => 'Grade', :name => 'app[current_grade]', :existing_select => 'app_current_grade') %>,
+
     <%= ext_field(:field_label => 'Notes', :name => 'app[notes]', :xtype => :text_area) %>,
-    <%= ext_field(:field_label => 'Priority type', :name => 'app[priority_type]', :xtype => :text_field) %>
+
+    <%= ext_hidden_field(:name => 'app[grade_in_year]') %>,
+
   ];
 <% end -%>
