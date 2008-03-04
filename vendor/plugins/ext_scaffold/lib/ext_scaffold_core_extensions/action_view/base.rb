@@ -121,14 +121,14 @@ module ExtScaffoldCoreExtensions
               Ext.form.Field.prototype.msgTarget = 'side';
 
               var panel = new Ext.FormPanel({
-                  labelWidth:   75, // label settings here cascade unless overridden
+                  labelWidth:   140, // label settings here cascade unless overridden
                   url:          '#{collection_path}',
                   frame:         true,
                   waitMsgTarget: true,
                   title:         '#{form_title}',
                   bodyStyle:     'padding:5px 5px 0',
-                  width:         350,
-                  defaults:      {width: 230},
+                  width:         550,
+                  defaults:      {width: 330},
                   defaultType:   'textfield',
                   renderTo:      '#{element}',
 
