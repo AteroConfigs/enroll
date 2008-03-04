@@ -70,6 +70,9 @@ class AppsController < ApplicationController
 
   # PUT /apps/1
   def update
+
+    App.grade_from_params(params[:app]) # txform current_grade to real fields
+
     respond_to do |format|
       if @app.update_attributes(params[:app])
         flash[:notice] = 'App was successfully updated.'

@@ -53,6 +53,28 @@ class App < ActiveRecord::Base
     return grade + (App.this_year - grade_in_year)
   end
 
+  #
+  # This is necessary to navigate the issue around
+  # current_grade being a calculated field 
+  # and the real values it is based on (grade, grade_in_year)
+  #
+  # We reverse the current_grade calculation at the form
+  # submit stage (which is why we deal with text values),
+  # and then let the normal ActiveRecord validations occur
+  #
+  # We might be able to move this to current_grade= later
+  #
+  def self.grade_from_params(params)
+    if params.has_key?('current_grade') && params.has_key?('grade_in_year')
+      cg = params['current_grade'].to_i
+      giy = params['grade_in_year'].to_i
+      grade = cg - (App.this_year - giy)
+
+      params['grade'] = grade.to_s
+      params.delete('current_grade')
+    end
+  end
+
   def txt_current_grade
     g = current_grade
     return 'k' if g == 0
