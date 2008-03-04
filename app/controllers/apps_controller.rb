@@ -45,7 +45,8 @@ class AppsController < ApplicationController
   # GET /apps/new
   def new
     @app = App.new(params[:app])
-    # new.html.erb
+    @app.state = "CA"
+    @app.grade_in_year = App.this_year
   end
 
   # GET /apps/1/edit
