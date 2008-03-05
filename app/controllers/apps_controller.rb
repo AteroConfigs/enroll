@@ -57,6 +57,8 @@ class AppsController < ApplicationController
 
   # POST /apps
   def create
+    App.grade_from_params(params[:app]) # txform current_grade to real fields
+
     @app = App.new(params[:app])
 
     respond_to do |format|
