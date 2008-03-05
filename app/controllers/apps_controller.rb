@@ -47,6 +47,7 @@ class AppsController < ApplicationController
     @app = App.new(params[:app])
     @app.state = "CA"
     @app.grade_in_year = App.this_year
+    @app.grade = 0
   end
 
   # GET /apps/1/edit
