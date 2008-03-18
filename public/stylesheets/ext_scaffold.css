@@ -96,3 +96,25 @@ pre {
   padding: 10px;
   font-size: 11px;
 }
+
+#container {
+  background-color: #eee;
+  padding: 10px;
+}
+
+#userinfo {
+  float: right;
+  background-color: #ffffff;
+  padding: 5px;
+  margin: 2px;
+  margin-right: 25px;
+}
+
+#info {
+  background-color: #ffffff;
+  padding: 10px;
+  border: 2px solid #ccc;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 0px;
+}
