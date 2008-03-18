@@ -29,6 +29,7 @@ class AppsController < ApplicationController
         @apps = App.find :all
 
         @apps.reject! { |o| o.txt_current_grade != query || o.txt_status != 'wait' || o.wait_list_position == 0 }
+        @apps = @apps.sort_by { |o| o.wait_list_position }
         render :json => @apps.to_ext_json(:class => :app, 
                               :count => @apps.length, 
                               :ar_options => {:only => [:status, :first_name, :last_name, :wait_list_position, :id, :code ],

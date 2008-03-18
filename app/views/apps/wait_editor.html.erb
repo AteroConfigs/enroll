@@ -1,7 +1,5 @@
 <div id="app-grid"></div>
-<%= ext_datastore_for :app, :path => wait_editor_apps_path(:format => :ext_json) %>
-<script type="text/javascript">
-//<![CDATA[
+<% javascript_tag do -%>
           var app_datastore = new Ext.data.Store({
                   proxy: new Ext.data.HttpProxy({
                              url: '/apps/wait_editor?format=ext_json',
@@ -23,12 +21,11 @@
                           {name: 'app[txt_type]', mapping: 'txt_type'},
                           {name: 'app[current_grade]', mapping: 'current_grade'} ]),
                   // turn on remote sorting
-                  //remoteSort: true,
-                  sortInfo: {field: 'app[wait_list_position]', direction: 'ASC'}
+                  remoteSort: true,
+                  // sortInfo: {field: 'app[wait_list_position]', direction: 'ASC'}
               });
 
-//]]>
-</script>
+<% end -%>
 <% javascript_tag do -%>
   var app_column_model = new Ext.grid.ColumnModel([
     {id: 'id', header: "#", width: 20, dataIndex: 'id'},
@@ -161,7 +158,7 @@ Ext.extend(Ext.ux.dd.GridReorderDropTarget, Ext.util.Observable, {
               var ds = app_datastore;
 
               var cm = app_column_model;
-              cm.defaultSortable = true;
+              cm.defaultSortable = false; // Turn off sorting
 
               // create the grid
               var grid = new Ext.grid.GridPanel({
@@ -259,7 +256,8 @@ Ext.extend(Ext.ux.dd.GridReorderDropTarget, Ext.util.Observable, {
                                         // return false to cancel the move
                                   }
                                   ,afterrowmove: function(objThis, oldIndex, newIndex, records) {
-                                  // code goes here
+                                        // code goes here
+                                        alert('moved -' + oldIndex + ' -> ' + newIndex);
                                   }
                                   ,beforerowcopy: function(objThis, oldIndex, newIndex, records) {
                                   // code goes here
@@ -267,6 +265,7 @@ Ext.extend(Ext.ux.dd.GridReorderDropTarget, Ext.util.Observable, {
                                   }
                                   ,afterrowcopy: function(objThis, oldIndex, newIndex, records) {
                                   // code goes here
+                                    alert('copied');
                                   }
                                   }
                                   });
