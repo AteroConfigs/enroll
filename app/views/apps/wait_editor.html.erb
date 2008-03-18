@@ -255,11 +255,12 @@ Ext.extend(Ext.ux.dd.GridReorderDropTarget, Ext.util.Observable, {
                                   }
                                   ,afterrowmove: function(objThis, oldIndex, newIndex, records) {
                                         // code goes here
+                                        newIndex = newIndex + 1;  // Make the index the wait_list_order number
                                     new Ajax.Request('/apps/update_order',
                                       {
                                         asynchronous:true,
                                         evalScripts:true,
-                                        parameters: 'obj_id=' + records[0].id + '&new_pos=' + newIndex + '&authenticity_token=' + encodeURIComponent('<%= form_authenticity_token %>')
+                                        parameters: 'obj_id=' + records[0].id + '&new_pos=' + newIndex + '&query=' + records[0].data["app[txt_current_grade]"] + '&authenticity_token=' + encodeURIComponent('<%= form_authenticity_token %>')
                                       }
                                     )
                                         //alert('moved -' + oldIndex + ' -> ' + newIndex);

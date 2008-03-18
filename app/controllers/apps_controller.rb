@@ -26,10 +26,7 @@ class AppsController < ApplicationController
       format.html     # index.html.erb (no data required)
       format.ext_json { 
         query = params[:query] || 'k'
-        @apps = App.find :all
-
-        @apps.reject! { |o| o.txt_current_grade != query || o.txt_status != 'wait' || o.wait_list_position == 0 }
-        @apps = @apps.sort_by { |o| o.wait_list_position }
+        @apps = App.wait_list_for_txt_grade(query)
         render :json => @apps.to_ext_json(:class => :app, 
                               :count => @apps.length, 
                               :ar_options => {:only => [:status, :first_name, :last_name, :wait_list_position, :id, :code ],
@@ -40,15 +37,39 @@ class AppsController < ApplicationController
   # GET /update_order
   # Take an ajax wait_editor reordering and store that in the database
   def update_order
-
     obj_id  = params[:obj_id]
-    new_pos = params[:new_pos]
+    new_pos = params[:new_pos].to_i
+    query   = params[:query]
     obj = App.find obj_id
 
+    # Ok, one of the Apps has just moved, 
+    @apps = App.wait_list_for_txt_grade(query)
+    @apps.delete obj
+    old_pos = obj.wait_list_position
+    obj.wait_list_position = new_pos
+    obj.save
+
+    if (new_pos < old_pos)
+      @apps.reject! { |e| (e.wait_list_position < new_pos) || (e.wait_list_position > old_pos) }
+      @apps.each do 
+        | e |
+          e.wait_list_position += 1 
+        e.save
+      end
+    else
+      @apps.reject! { |e| (e.wait_list_position > new_pos) || (e.wait_list_position < old_pos) }
+      @apps.each do 
+        | e |
+          e.wait_list_position -= 1 
+        e.save
+      end
+    end
+
     render :update do |page| 
-      page.replace_html('flash-message', "Got re-order event #{obj.code} new pos -> #{new_pos}")
+      page.replace_html('flash-message', "Did re-order event #{obj.code} new pos -> #{new_pos}")
       page.show 'flash-message' 
       page.visual_effect :highlight, 'flash-message' 
+      page.call('app_datastore.reload')
       page.delay(4) do
         page.visual_effect :fade, 'flash-message' 
       end
@@ -57,17 +78,7 @@ class AppsController < ApplicationController
 
   # GET /waitlist
   def waitlist
-    apps0 = App.find :all
-
-    apps1 = apps0.reject { |e| e.txt_status == 'removed' }
-    apps2 = apps1.reject { |e| e.wait_list_position == 0 }
-
-    apps = {}
-    (0..8).each do | grade |
-      apps[grade] = apps2.select { |e| e.current_grade == grade && e.wait_list_position }.sort_by { |a| a.wait_list_position }
-    end
-
-    @apps = apps
+    @apps = App.wait_list
 
     respond_to do |format|
       format.html {    # index.html.erb (no data required)

@@ -81,6 +81,36 @@ class App < ActiveRecord::Base
     g.to_s
   end
 
+  def self.wait_list_for_txt_grade(query)
+    mapping = { 
+      'k' => 0,
+      '1' => 1,
+      '2' => 2,
+      '3' => 3,
+      '4' => 4,
+      '5' => 5,
+      '6' => 6,
+      '7' => 7,
+      '8' => 8,
+    }
+
+    bag = App.wait_list()
+
+    return bag[mapping[query]]
+  end
+
+  def self.wait_list()
+    apps = App.find :all
+    apps.reject! { |o| o.txt_status != 'wait' || o.wait_list_position == 0 }
+
+    bag = {}
+    (0..8).each do | grade |
+      bag[grade] = apps.select { |e| e.current_grade == grade }.sort_by { |a| a.wait_list_position }
+    end
+    return bag
+  end
+
+
 end
 
 App.inheritance_column = 'blblblb'
