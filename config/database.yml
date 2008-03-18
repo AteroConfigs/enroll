@@ -3,7 +3,7 @@
 development:
   adapter: mysql
   database: CLC
-  user: dru
+  username: clc
   host: localhost
   socket: /var/run/mysqld/mysqld.sock
   timeout: 5000
