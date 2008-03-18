@@ -11,7 +11,7 @@ class AppsController < ApplicationController
       format.ext_json {
         find_apps
         render :json => @apps.to_ext_json(:class => :app, 
-                              :count => @apps.length, 
+                              :count => App.count, 
                               :ar_options => {:only => [:status, :first_name, :last_name, :wait_list_position, :id, :code ],
                                               :methods => [:txt_status, :txt_current_grade, :txt_type] }
                         )
