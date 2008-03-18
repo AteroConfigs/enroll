@@ -37,6 +37,24 @@ class AppsController < ApplicationController
     end
   end
 
+  # GET /update_order
+  # Take an ajax wait_editor reordering and store that in the database
+  def update_order
+
+    obj_id  = params[:obj_id]
+    new_pos = params[:new_pos]
+    obj = App.find obj_id
+
+    render :update do |page| 
+      page.replace_html('flash-message', "Got re-order event #{obj.code} new pos -> #{new_pos}")
+      page.show 'flash-message' 
+      page.visual_effect :highlight, 'flash-message' 
+      page.delay(4) do
+        page.visual_effect :fade, 'flash-message' 
+      end
+    end 
+  end
+
   # GET /waitlist
   def waitlist
     apps0 = App.find :all
