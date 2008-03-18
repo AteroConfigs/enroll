@@ -153,13 +153,13 @@ module ExtScaffoldCoreExtensions
       end
 
       def ext_datastore_for(object_name, options = {})
-        collection_path_method = "#{object_name.to_s.pluralize}_path"
+        collection_path = options[:path] || (send "#{object_name.to_s.pluralize}_path", :format => :ext_json)
         datastore_name = options[:datastore] || "#{object_name}_datastore"
         primary_key = object_name.to_s.classify.constantize.primary_key
         javascript_tag <<-_JS  
           var #{datastore_name} = new Ext.data.Store({
                   proxy: new Ext.data.HttpProxy({
-                             url: '#{send collection_path_method, :format => :ext_json}',
+                             url: '#{collection_path}',
                              method: 'GET'
                          }),
                   reader: new Ext.data.JsonReader({

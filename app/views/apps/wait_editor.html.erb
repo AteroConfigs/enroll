@@ -1,0 +1,354 @@
+<div id="app-grid"></div>
+<%= ext_datastore_for :app, :path => wait_editor_apps_path(:format => :ext_json) %>
+<script type="text/javascript">
+//<![CDATA[
+          var app_datastore = new Ext.data.Store({
+                  proxy: new Ext.data.HttpProxy({
+                             url: '/apps/wait_editor?format=ext_json',
+                             method: 'GET'
+                         }),
+                  reader: new Ext.data.JsonReader({
+                              root: 'apps',
+                              id: 'id',
+                              totalProperty: 'results'
+                          },
+                          [ {name: 'id', mapping: 'id'}, {name: 'app[first_name]', mapping: 'first_name'},
+                          {name: 'app[last_name]', mapping: 'last_name'},
+                          {name: 'app[code]', mapping: 'code'},
+                          {name: 'app[grade]', mapping: 'grade'},
+                          {name: 'app[status]', mapping: 'status'},
+                          {name: 'app[priority_type]', mapping: 'priority_type'},
+                          {name: 'app[sequence_number]', mapping: 'sequence_number'},
+                          {name: 'app[wait_list_position]', mapping: 'wait_list_position'},
+                          {name: 'app[txt_current_grade]', mapping: 'txt_current_grade'},
+                          {name: 'app[txt_status]', mapping: 'txt_status'},
+                          {name: 'app[txt_type]', mapping: 'txt_type'},
+                          {name: 'app[current_grade]', mapping: 'current_grade'} ]),
+                  // turn on remote sorting
+                  //remoteSort: true,
+                  sortInfo: {field: 'app[wait_list_position]', direction: 'ASC'}
+              });
+
+//]]>
+</script>
+<% javascript_tag do -%>
+  var app_column_model = new Ext.grid.ColumnModel([
+    {id: 'id', header: "#", width: 20, dataIndex: 'id'},
+    {header: 'code', width: 40, dataIndex: 'app[code]'},
+    {header: 'First name', dataIndex: 'app[first_name]'},
+    {header: 'Last name', dataIndex: 'app[last_name]'},
+    {header: 'Current Grade', dataIndex: 'app[txt_current_grade]'},
+    {header: 'Wait Position', dataIndex: 'app[wait_list_position]'},
+    {header: 'Status', dataIndex: 'app[txt_status]'},
+  ]);
+<% end -%>
+
+<select name="grades" id="grades" style="display: none;">
+  <option value="k">K</option>
+  <option value="1">1</option>
+
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+  <option value="6">6</option>
+  <option value="7">7</option>
+  <option value="8">8</option>
+</select>
+
+<script type="text/javascript">
+//<![CDATA[
+
+          var filterKeyItems = new Ext.data.SimpleStore({
+            fields: ['grade'],
+            data : [['K'], ['1'],['2'],['3']]
+          });
+          
+          var filterKeyConfig2 = {
+            store: filterKeyItems,
+            displayField:'grade',
+            typeAhead: true,
+            mode: 'local',
+            emptyText: 'Select key to filter',
+            triggerAction: 'all',
+            selectOnFocus:true,
+            width:135,
+            editable: false
+          };
+          var filterKeyConfig = {
+            transform: 'grades',
+            typeAhead: true,
+            triggerAction: 'all',
+            lazyRender: true,
+            editable: false
+            //selectOnFocus:true,
+          };
+
+          var fieldSearch = function(toolbar, grid) {
+            this.filterKeyCombo = new Ext.form.ComboBox(filterKeyConfig);                          
+            this.filterKeyCombo.on('select', function(o, record){
+              var store = grid.store;
+              //alert(record.data.value);
+              delete(store.baseParams['query']);
+              store.baseParams['query'] = record.data.value;
+              // reload store
+              store.reload();
+            });
+            this.filterKeyCombo.ODODODOD = function(record) {
+              var store = grid.store;
+              if(store.lastOptions && store.lastOptions.params) {
+                store.lastOptions.params[store.paramNames.start] = 0;
+              }
+
+              // get fields to search array
+              var fields = [];
+              this.menu.items.each(function(item) {
+                  if(item.checked) {
+                      fields.push(item.dataIndex);
+                  }
+              });
+
+              // add fields and query to baseParams of store
+              delete(store.baseParams[this.paramNames.fields]);
+              delete(store.baseParams[this.paramNames.query]);
+              if (store.lastOptions && store.lastOptions.params) {
+                delete(store.lastOptions.params[this.paramNames.fields]);
+                delete(store.lastOptions.params[this.paramNames.query]);
+              }
+              if(fields.length) {
+                store.baseParams[this.paramNames.fields] = Ext.encode(fields);
+                store.baseParams[this.paramNames.query] = val;
+              }
+
+              // reload store
+              store.reload();
+            }; 
+
+
+            toolbar.add(this.filterKeyCombo);            
+          };
+          
+          //var toolbar = new Ext.Toolbar('toolbar');          
+
+
+// this code goes in a javascript include file somewhere
+Ext.namespace('Ext.ux.dd');
+
+Ext.ux.dd.GridReorderDropTarget = function(grid, config) {
+    this.target = new Ext.dd.DropTarget(grid.getEl(), {
+        ddGroup: grid.ddGroup || 'GridDD'
+        ,grid: grid
+        ,gridDropTarget: this
+        ,notifyDrop: function(dd, e, data){
+            // determine the row
+            var t = Ext.lib.Event.getTarget(e);
+            var rindex = this.grid.getView().findRowIndex(t);
+            if (rindex === false) return false;
+            if (rindex == data.rowIndex) return false;
+
+            // fire the before move/copy event
+            if (this.gridDropTarget.fireEvent(this.copy?'beforerowcopy':'beforerowmove', this.gridDropTarget, data.rowIndex, rindex, data.selections) === false) return false;
+
+            // update the store
+            var ds = this.grid.getStore();
+            if (!this.copy) {
+                for(i = 0; i < data.selections.length; i++) {
+                    ds.remove(ds.getById(data.selections[i].id));
+                }
+            }
+            ds.insert(rindex,data.selections);
+
+            // re-select the row(s)
+            var sm = this.grid.getSelectionModel();
+            if (sm) sm.selectRecords(data.selections);
+
+            // fire the after move/copy event
+            this.gridDropTarget.fireEvent(this.copy?'afterrowcopy':'afterrowmove', this.gridDropTarget, data.rowIndex, rindex, data.selections);
+
+            return true;
+        }
+        ,notifyOver: function(dd, e, data) {
+            var t = Ext.lib.Event.getTarget(e);
+            var rindex = this.grid.getView().findRowIndex(t);
+            if (rindex == data.rowIndex) rindex = false;
+
+            return (rindex === false)? this.dropNotAllowed : this.dropAllowed;
+        }
+    });
+    if (config) {
+        Ext.apply(this.target, config);
+        if (config.listeners) Ext.apply(this,{listeners: config.listeners});
+    }
+
+    this.addEvents({
+        "beforerowmove": true
+        ,"afterrowmove": true
+        ,"beforerowcopy": true
+        ,"afterrowcopy": true
+    });
+
+    Ext.ux.dd.GridReorderDropTarget.superclass.constructor.call(this);
+};
+
+Ext.extend(Ext.ux.dd.GridReorderDropTarget, Ext.util.Observable, {
+    getTarget: function() {
+        return this.target;
+    }
+    ,getGrid: function() {
+        return this.target.grid;
+    }
+    ,getCopy: function() {
+        return this.target.copy?true:false;
+    }
+    ,setCopy: function(b) {
+        this.target.copy = b?true:false;
+    }
+});
+
+          Ext.onReady(function(){
+
+              Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+              Ext.QuickTips.init();
+
+              var ds = app_datastore;
+
+              var cm = app_column_model;
+              cm.defaultSortable = true;
+
+              // create the grid
+              var grid = new Ext.grid.GridPanel({
+                  ds: ds,
+                  cm: cm,
+                  sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+                  renderTo:   'app-grid',
+                  title:      'Waitlist Editor',
+                  width:      800,
+                  height:     628,
+                  stripeRows: true,
+                  viewConfig: {
+                      forceFit:true
+                  },
+
+                  // inline toolbars
+                  tbar:[],
+/*
+                  {
+                      text:'New...',
+                      tooltip:'Create new App',
+                      handler: function(){ window.location.href = '/apps/new'; },
+                      iconCls:'add'
+                  }, '-', {
+                      text:'New...',
+                      tooltip:'Create new App',
+                      handler: function(){ window.location.href = '/apps/new'; },
+                      iconCls:'add'
+                  }, '-', {
+                      text:'Edit...',
+                      tooltip:'Edit selected App',
+                      handler: function(){
+                                 var selected = grid.getSelectionModel().getSelected();
+                                 if(selected) {
+                                   window.location.href = '/apps/' + selected.data.id + '/edit';
+                                 } else { 
+                                   alert('Please select a row first.');
+                                 }
+                               },
+                      iconCls:'edit'
+                  },'-',{
+                      text:'Delete...',
+                      tooltip:'Delete selected App',
+                      handler: function(){
+                                 var selected = grid.getSelectionModel().getSelected();
+                                 if(selected) {
+                                   if(confirm('Really delete?')) {
+                                      var conn = new Ext.data.Connection();
+                                      conn.request({
+                                          url: '/apps/' + selected.data.id,
+                                          method: 'POST',
+                                          params: { _method: 'DELETE',
+                                                    authenticity_token: 'ddfee3b0e93115a5b492fc2df38aa39b0b00d5f8'
+                                                  },
+                                          success: function(response, options){ ds.load(); },
+                                          failure: function(response, options){ alert('Delete operation failed.'); }
+                                      });
+                                   }
+                                 } else { 
+                                   alert('Please select a row first.');
+                                 }
+                               },
+                      iconCls:'remove'
+                  },'->'],
+                  bbar: new Ext.PagingToolbar({
+                            pageSize: 25,
+                            store: ds,
+                            displayInfo: true,
+                            displayMsg: 'Record {0} - {1} of {2}',
+                            emptyMsg: "No records found"
+                  }),
+                  plugins:[new Ext.ux.grid.Search({
+                              position:'top'
+                          })],
+*/
+                  ddGroup: 'GridDD',
+                  ddText: 'Drag and Drop Change Order',
+                  enableDragDrop: true,
+                  listeners: {
+                    render: function(g) {
+                    // Best to create the drop target after render, so we don't need to worry about whether grid.el is null
+
+                    // constructor parameters:
+                    //    grid (required): GridPanel or EditorGridPanel (with enableDragDrop set to true and optionally a value specified for ddGroup, which defaults to 'GridDD')
+                    //    config (optional): config object
+                    // valid config params:
+                    //    anything accepted by DropTarget
+                    //    listeners: listeners object. There are 4 valid listeners, all listed in the example below
+                    //    copy: boolean. Determines whether to move (false) or copy (true) the row(s) (defaults to false for move)
+                              var ddrow = new Ext.ux.dd.GridReorderDropTarget(g, {
+                                  copy: false
+                                  ,listeners: {
+                                        beforerowmove: function(objThis, oldIndex, newIndex, records) {
+                                        // code goes here
+                                        // return false to cancel the move
+                                  }
+                                  ,afterrowmove: function(objThis, oldIndex, newIndex, records) {
+                                  // code goes here
+                                  }
+                                  ,beforerowcopy: function(objThis, oldIndex, newIndex, records) {
+                                  // code goes here
+                                  // return false to cancel the copy
+                                  }
+                                  ,afterrowcopy: function(objThis, oldIndex, newIndex, records) {
+                                  // code goes here
+                                  }
+                                  }
+                                  });
+
+                              // if you need scrolling, register the grid view's scroller with the scroll manager
+                              Ext.dd.ScrollManager.register(g.getView().getEditorParent());
+
+       var tb = g.topToolbar;
+          var search1 = new fieldSearch(tb,g);
+
+
+        }
+                      ,beforedestroy: function(g) {
+                              // if you previously registered with the scroll manager, unregister it (if you don't it will lead to problems in IE)
+                              Ext.dd.ScrollManager.unregister(g.getView().getEditorParent());
+                      }
+    }
+                        //});
+
+              });
+
+              // show record on double-click
+              //grid.on("rowdblclick", function(grid, row, e) {
+              //  window.location.href = '/apps/' + grid.getStore().getAt(row).id;
+              //});
+              grid.render();
+
+              ds.load({params: {start: 0, limit:25}});
+          });
+
+//]]>
+</script>
+

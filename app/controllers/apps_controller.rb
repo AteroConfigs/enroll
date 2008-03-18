@@ -8,9 +8,29 @@ class AppsController < ApplicationController
   def index
     respond_to do |format|
       format.html     # index.html.erb (no data required)
-      format.ext_json { render :json =>
-        find_apps.to_ext_json(:class => :app, 
-                              :count => App.count, 
+      format.ext_json {
+        find_apps
+        render :json => @apps.to_ext_json(:class => :app, 
+                              :count => @apps.length, 
+                              :ar_options => {:only => [:status, :first_name, :last_name, :wait_list_position, :id, :code ],
+                                              :methods => [:txt_status, :txt_current_grade, :txt_type] }
+                        )
+      }
+    end
+  end
+
+  # GET /wait_editor
+  # This allows the user to change the order of the waitlist via ajax
+  def wait_editor
+    respond_to do |format|
+      format.html     # index.html.erb (no data required)
+      format.ext_json { 
+        query = params[:query] || 'k'
+        @apps = App.find :all
+
+        @apps.reject! { |o| o.txt_current_grade != query || o.txt_status != 'wait' || o.wait_list_position == 0 }
+        render :json => @apps.to_ext_json(:class => :app, 
+                              :count => @apps.length, 
                               :ar_options => {:only => [:status, :first_name, :last_name, :wait_list_position, :id, :code ],
                                               :methods => [:txt_status, :txt_current_grade, :txt_type] } ) }
     end
@@ -25,7 +45,7 @@ class AppsController < ApplicationController
 
     apps = {}
     (0..8).each do | grade |
-      apps[grade] = apps2.select { |e| e.current_grade == grade }.sort_by { |a| a.wait_list_position }
+      apps[grade] = apps2.select { |e| e.current_grade == grade && e.wait_list_position }.sort_by { |a| a.wait_list_position }
     end
 
     @apps = apps

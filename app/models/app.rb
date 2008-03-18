@@ -78,7 +78,7 @@ class App < ActiveRecord::Base
   def txt_current_grade
     g = current_grade
     return 'k' if g == 0
-    g
+    g.to_s
   end
 
 end
