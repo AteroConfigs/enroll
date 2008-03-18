@@ -17,8 +17,6 @@
                           {name: 'app[code]', mapping: 'code'},
                           {name: 'app[grade]', mapping: 'grade'},
                           {name: 'app[status]', mapping: 'status'},
-                          {name: 'app[priority_type]', mapping: 'priority_type'},
-                          {name: 'app[sequence_number]', mapping: 'sequence_number'},
                           {name: 'app[wait_list_position]', mapping: 'wait_list_position'},
                           {name: 'app[txt_current_grade]', mapping: 'txt_current_grade'},
                           {name: 'app[txt_status]', mapping: 'txt_status'},
@@ -58,23 +56,6 @@
 
 <script type="text/javascript">
 //<![CDATA[
-
-          var filterKeyItems = new Ext.data.SimpleStore({
-            fields: ['grade'],
-            data : [['K'], ['1'],['2'],['3']]
-          });
-          
-          var filterKeyConfig2 = {
-            store: filterKeyItems,
-            displayField:'grade',
-            typeAhead: true,
-            mode: 'local',
-            emptyText: 'Select key to filter',
-            triggerAction: 'all',
-            selectOnFocus:true,
-            width:135,
-            editable: false
-          };
           var filterKeyConfig = {
             transform: 'grades',
             typeAhead: true,
@@ -88,43 +69,10 @@
             this.filterKeyCombo = new Ext.form.ComboBox(filterKeyConfig);                          
             this.filterKeyCombo.on('select', function(o, record){
               var store = grid.store;
-              //alert(record.data.value);
               delete(store.baseParams['query']);
               store.baseParams['query'] = record.data.value;
-              // reload store
               store.reload();
             });
-            this.filterKeyCombo.ODODODOD = function(record) {
-              var store = grid.store;
-              if(store.lastOptions && store.lastOptions.params) {
-                store.lastOptions.params[store.paramNames.start] = 0;
-              }
-
-              // get fields to search array
-              var fields = [];
-              this.menu.items.each(function(item) {
-                  if(item.checked) {
-                      fields.push(item.dataIndex);
-                  }
-              });
-
-              // add fields and query to baseParams of store
-              delete(store.baseParams[this.paramNames.fields]);
-              delete(store.baseParams[this.paramNames.query]);
-              if (store.lastOptions && store.lastOptions.params) {
-                delete(store.lastOptions.params[this.paramNames.fields]);
-                delete(store.lastOptions.params[this.paramNames.query]);
-              }
-              if(fields.length) {
-                store.baseParams[this.paramNames.fields] = Ext.encode(fields);
-                store.baseParams[this.paramNames.query] = val;
-              }
-
-              // reload store
-              store.reload();
-            }; 
-
-
             toolbar.add(this.filterKeyCombo);            
           };
           
