@@ -193,6 +193,7 @@ module ExtScaffoldCoreExtensions
         js << "  vtype: '#{options[:vtype]}'," if options[:vtype]
         js << "  xtype: '#{options[:xtype]}'," if options[:xtype]
         js << "  format: 'm/d/Y'," if options[:xtype] == 'datefield'
+        js << "  altFormats: 'Y/m/d|m/d/y|mdy'," if options[:xtype] == 'datefield'
         js << "  dateFormat: 'Y/m/d', timeFormat: 'H:i:s'," if options[:xtype] == 'xdatetime'
         js << "  inputValue: '1', width: 18, height: 21," if options[:xtype] == 'checkbox'
         js << "  name: '#{options[:name]}'"
