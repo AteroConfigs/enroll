@@ -9,7 +9,7 @@ default_run_options[:pty] = true
 set :repository,  "git://github.com/drudru/enroll.git"
 set :scm, "git"
 set :user, "dru"
-set :branch, "origin/master"
+#set :branch, "origin/master"
 ssh_options[:port] = 73
 set :deploy_via, :remote_cache
 
