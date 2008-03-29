@@ -7,7 +7,10 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect '/waitlist.html', :controller => 'apps', :action => 'waitlist'
 
-  map.resources :apps,  :collection => { :waitlist => :get, :wait_editor => :get, :update_order => :get }
+  map.resources :apps,  :collection => { :waitlist => :get, 
+                                         :wait_editor => :get,
+                                         :ungap_list => :post },
+                        :member => { :toggle_zero => :post, :update_order => :post }
 
   # The priority is based upon order of creation: first created -> highest priority.
 

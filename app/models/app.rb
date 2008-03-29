@@ -81,7 +81,7 @@ class App < ActiveRecord::Base
     g.to_s
   end
 
-  def self.wait_list_for_txt_grade(query)
+  def self.wait_list_for_txt_grade(query, include_zero = false)
     mapping = { 
       'k' => 0,
       '1' => 1,
@@ -94,14 +94,18 @@ class App < ActiveRecord::Base
       '8' => 8,
     }
 
-    bag = App.wait_list()
+    bag = App.wait_list(include_zero)
 
     return bag[mapping[query]]
   end
 
-  def self.wait_list()
+  def self.wait_list(include_zero = false)
     apps = App.find :all
-    apps.reject! { |o| o.txt_status != 'wait' || o.wait_list_position == 0 }
+
+    apps.reject! { |o| o.txt_status != 'wait' }
+    if not include_zero
+      apps.reject! { |o| o.wait_list_position == 0 }
+    end
 
     bag = {}
     (0..8).each do | grade |
@@ -110,7 +114,41 @@ class App < ActiveRecord::Base
     return bag
   end
 
+  def move_to_end_of_waitlist()
+    all_apps = App.wait_list
+    my_grades_apps = all_apps[self.current_grade]
 
+
+    self.wait_list_position = my_grades_apps.last.wait_list_position + 1
+
+    save
+  end
+
+  def self.normalize_waitlist_for_txt_grade(txt_grade)
+
+    apps = App.wait_list_for_txt_grade(txt_grade)
+
+    touched = false
+    apps.each_with_index {
+      | app, idx |
+      if app.wait_list_position != (idx + 1)
+        touched = true
+      end
+    }
+
+    if not touched
+      return 0
+    end
+
+    apps.each_with_index {
+      | app, idx |
+      app.wait_list_position = (idx + 1)
+      app.save
+    }
+
+    return 1
+
+  end
 end
 
 App.inheritance_column = 'blblblb'

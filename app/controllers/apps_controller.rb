@@ -1,7 +1,7 @@
 class AppsController < ApplicationController
 
   before_filter :login_required, :except => :waitlist
-  before_filter :find_app, :only => [ :show, :edit, :update, :destroy ]
+  before_filter :find_app, :only => [ :show, :edit, :update, :destroy, :toggle_zero, :update_order ]
 
   # GET /apps
   # GET /apps.ext_json
@@ -26,7 +26,7 @@ class AppsController < ApplicationController
       format.html     # index.html.erb (no data required)
       format.ext_json { 
         query = params[:query] || 'k'
-        @apps = App.wait_list_for_txt_grade(query)
+        @apps = App.wait_list_for_txt_grade(query, true)
         render :json => @apps.to_ext_json(:class => :app, 
                               :count => @apps.length, 
                               :ar_options => {:only => [:status, :first_name, :last_name, :wait_list_position, :id, :code ],
@@ -37,36 +37,51 @@ class AppsController < ApplicationController
   # GET /update_order
   # Take an ajax wait_editor reordering and store that in the database
   def update_order
-    obj_id  = params[:obj_id]
     new_pos = params[:new_pos].to_i
-    query   = params[:query]
-    obj = App.find obj_id
 
-    # Ok, one of the Apps has just moved, 
-    @apps = App.wait_list_for_txt_grade(query)
-    @apps.delete obj
-    old_pos = obj.wait_list_position
-    obj.wait_list_position = new_pos
-    obj.save
+    old_pos = @app.wait_list_position
 
-    if (new_pos < old_pos)
-      @apps.reject! { |e| (e.wait_list_position < new_pos) || (e.wait_list_position > old_pos) }
-      @apps.each do 
-        | e |
-          e.wait_list_position += 1 
-        e.save
+    if old_pos != 0
+
+      # Now check that the new_pos is not in the zero wait-list
+      @apps = App.wait_list_for_txt_grade(@app.current_grade.to_s, true)
+      new_pos = @apps[new_pos].wait_list_position
+
+      if new_pos == 0
+        mesg = "Can not move. App is in non-zero wait-list."
+      else
+
+        # Ok, first, lets get rid of the zero wait-list
+        @apps.reject! { |e| e.wait_list_position == 0 }
+
+        # Remove this app from the list, but give it the new position
+        @apps.delete @app
+        @app.wait_list_position = new_pos
+        @app.save
+
+        if (new_pos < old_pos)             # App moved up
+          @apps.reject! { |e| (e.wait_list_position < new_pos) || (e.wait_list_position > old_pos) }
+          @apps.each do 
+            | e |
+              e.wait_list_position += 1 
+            e.save
+          end
+        else                               # App moved down
+          @apps.reject! { |e| (e.wait_list_position > new_pos) || (e.wait_list_position < old_pos) }
+          @apps.each do 
+            | e |
+              e.wait_list_position -= 1 
+            e.save
+          end
+        end
+        mesg = "Did re-order event #{@app.code} new pos -> #{new_pos}"
       end
     else
-      @apps.reject! { |e| (e.wait_list_position > new_pos) || (e.wait_list_position < old_pos) }
-      @apps.each do 
-        | e |
-          e.wait_list_position -= 1 
-        e.save
-      end
+      mesg = "Did not move. App is zero in wait-list."
     end
 
     render :update do |page| 
-      page.replace_html('flash-message', "Did re-order event #{obj.code} new pos -> #{new_pos}")
+      page.replace_html('flash-message', mesg)
       page.show 'flash-message' 
       page.visual_effect :highlight, 'flash-message' 
       page.call('app_datastore.reload')
@@ -75,6 +90,61 @@ class AppsController < ApplicationController
       end
     end 
   end
+
+  # GET /toggle_zero
+  # Take an ajax wait_editor request to toggle a user between zero and non-zero in the wait_list_position
+  def toggle_zero
+
+    if (@app.wait_list_position == 0)
+      @app.move_to_end_of_waitlist
+      mesg = 'Moved to end of waitlist'
+    else
+      @app.wait_list_position = 0
+      @app.save
+      mesg = 'Moved to zero group'
+    end
+
+    r = App.normalize_waitlist_for_txt_grade(@app.current_grade.to_s)
+
+    render :update do |page| 
+      page.replace_html('flash-message', mesg)
+      page.show 'flash-message' 
+      page.visual_effect :highlight, 'flash-message' 
+      page.call('app_datastore.reload')
+      page.delay(4) do
+        page.visual_effect :fade, 'flash-message' 
+      end
+    end 
+  end
+
+  # GET /ungap_list
+  # Normalize the order of the wait_list
+  def ungap_list
+
+    grade = params[:current_grade]
+    r = App.normalize_waitlist_for_txt_grade(grade)
+
+    if r == 1
+      mesg = 'Adjusted list'
+    elsif r == 0
+      mesg = 'Nothing to do'
+    else
+      mesg = 'Error adjusting list'
+    end
+
+    render :update do |page| 
+      page.replace_html('flash-message', mesg)
+      page.show 'flash-message' 
+      page.visual_effect :highlight, 'flash-message' 
+      if (r == 1)
+        page.call('app_datastore.reload')
+      end
+      page.delay(4) do
+        page.visual_effect :fade, 'flash-message' 
+      end
+    end 
+  end
+
 
   # GET /waitlist
   def waitlist

@@ -35,23 +35,73 @@
     {header: 'Current Grade', dataIndex: 'app[txt_current_grade]'},
     {header: 'Wait Position', dataIndex: 'app[wait_list_position]'},
     {header: 'Status', dataIndex: 'app[txt_status]'},
+    {header: "Zero Toggle", 
+      width: 60, 
+      sortable: false, 
+      renderer: function() {
+        return '<div class="controlBtn"><img src="../ext/examples/shared/icons/fam/arrow_switch.png" width="16" height="16" class="control_switch" ext:qtip="Toggle user from zero and non-zero"></div>';
+      }, 
+      dataIndex: 'company'},
   ]);
 <% end -%>
 
-<select name="grades" id="grades" style="display: none;">
-  <option value="k">K</option>
-  <option value="1">1</option>
-  <option value="2">2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
-  <option value="5">5</option>
-  <option value="6">6</option>
-  <option value="7">7</option>
-  <option value="8">8</option>
-</select>
+  <style>
+    .controlBtn img {
+      padding-left: 4px;
+      cursor: pointer;
+    }
+  </style>
+
+  <select name="grades" id="grades" style="display: none;">
+    <option value="k">K</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+  </select>
 
 <script type="text/javascript">
 //<![CDATA[
+
+          // Should really have the comboBox control reference instead of this global
+          var current_selected_grade = 'k';
+
+
+          function toggleUser(grid, record) {
+            if(!confirm('Really move user?'))
+              return;
+            var store = grid.store;
+            var conn = new Ext.data.Connection();
+            conn.request({ url: '/apps/' + record.data.id + '/toggle_zero',
+                          method: 'POST',
+                          params: { authenticity_token: encodeURIComponent('<%= form_authenticity_token %>')
+                                  },
+                          success: function(response, options){  },
+                          failure: function(response, options){ alert('Toggle operation failed.'); }
+                         }
+                        );
+          }
+
+
+          function unGapList(grid) {
+            var conn = new Ext.data.Connection();
+            conn.request({ url: '/apps/ungap_list',
+                          method: 'POST',
+                          params: { current_grade: current_selected_grade,
+                                    authenticity_token: encodeURIComponent('<%= form_authenticity_token %>')
+                                  },
+                          success: function(response, options){  },
+                          failure: function(response, options){ alert('Ungap operation failed.'); }
+                         }
+                        );
+          }
+
+
+
           var filterKeyConfig = {
             transform: 'grades',
             typeAhead: true,
@@ -65,9 +115,11 @@
             this.filterKeyCombo.on('select', function(o, record){
               var store = grid.store;
               delete(store.baseParams['query']);
-              store.baseParams['query'] = record.data.value;
+              current_selected_grade = record.data.value;
+              store.baseParams['query'] = current_selected_grade;
               store.reload();
             });
+            toolbar.addSeparator();
             toolbar.add(this.filterKeyCombo);            
           };
           
@@ -173,19 +225,16 @@ Ext.extend(Ext.ux.dd.GridReorderDropTarget, Ext.util.Observable, {
                   },
 
                   // inline toolbars
-                  tbar:[],
-/*
+                  tbar:[
                   {
-                      text:'New...',
-                      tooltip:'Create new App',
-                      handler: function(){ window.location.href = '/apps/new'; },
-                      iconCls:'add'
-                  }, '-', {
-                      text:'New...',
-                      tooltip:'Create new App',
-                      handler: function(){ window.location.href = '/apps/new'; },
-                      iconCls:'add'
-                  }, '-', {
+                      text:'Un-Gap...',
+                      tooltip:'Remove gaps in wait-list',
+                      handler: function () { unGapList(grid); },
+                      iconCls:'edit'
+                  }, '->',
+                  ],
+                  /*
+                  '-', {
                       text:'Edit...',
                       tooltip:'Edit selected App',
                       handler: function(){
@@ -254,13 +303,12 @@ Ext.extend(Ext.ux.dd.GridReorderDropTarget, Ext.util.Observable, {
                                         // return false to cancel the move
                                   }
                                   ,afterrowmove: function(objThis, oldIndex, newIndex, records) {
-                                        // code goes here
-                                        newIndex = newIndex + 1;  // Make the index the wait_list_order number
-                                    new Ajax.Request('/apps/update_order',
+                                      // Send the Ajax request
+                                      new Ajax.Request('/apps/' + records[0].id + '/update_order',
                                       {
                                         asynchronous:true,
                                         evalScripts:true,
-                                        parameters: 'obj_id=' + records[0].id + '&new_pos=' + newIndex + '&query=' + records[0].data["app[txt_current_grade]"] + '&authenticity_token=' + encodeURIComponent('<%= form_authenticity_token %>')
+                                        parameters: 'new_pos=' + newIndex + '&authenticity_token=' + encodeURIComponent('<%= form_authenticity_token %>')
                                       }
                                     )
                                         //alert('moved -' + oldIndex + ' -> ' + newIndex);
@@ -296,6 +344,26 @@ Ext.extend(Ext.ux.dd.GridReorderDropTarget, Ext.util.Observable, {
               //grid.on("rowdblclick", function(grid, row, e) {
               //  window.location.href = '/apps/' + grid.getStore().getAt(row).id;
               //});
+              grid.on('click', function(e) {
+                  var btn = e.getTarget('.controlBtn');        
+                  if (btn) {
+                    var t = e.getTarget();
+                    var v = this.view;
+                    var rowIdx = v.findRowIndex(t);
+                    var record = this.getStore().getAt(rowIdx);            
+                    var control = t.className.split('_')[1];
+                    switch (control) {
+                      case 'switch':
+                        toggleUser(grid, record);
+                        //alert('switch this record - ' + record.id);
+                        break;
+                      case 'go':
+                        console.log('go to this record - ' + record.id);
+                        break;
+                    }            
+                  }
+              }, grid);  
+
               grid.render();
 
               ds.load({params: {start: 0, limit:25}});
