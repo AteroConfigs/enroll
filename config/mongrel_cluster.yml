@@ -1,4 +1,4 @@
-cwd: /home/dru/enroll/current
+cwd: /home/dru/www/enroll/current
 port: "3000"
 environment: development
 address: 192.168.0.73
