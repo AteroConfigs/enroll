@@ -29,9 +29,9 @@
 <% javascript_tag do -%>
   var app_column_model = new Ext.grid.ColumnModel([
     {id: 'id', header: "#", width: 20, dataIndex: 'id'},
-    {header: 'code', width: 40, dataIndex: 'app[code]'},
-    {header: 'First name', dataIndex: 'app[first_name]'},
-    {header: 'Last name', dataIndex: 'app[last_name]'},
+    {header: 'App Code', width: 40, dataIndex: 'app[code]'},
+    {header: 'First Name', dataIndex: 'app[first_name]'},
+    {header: 'Last Name', dataIndex: 'app[last_name]'},
     {header: 'Current Grade', dataIndex: 'app[txt_current_grade]'},
     {header: 'Wait Position', dataIndex: 'app[wait_list_position]'},
     {header: 'Status', dataIndex: 'app[txt_status]'},
@@ -281,7 +281,6 @@ Ext.extend(Ext.ux.dd.GridReorderDropTarget, Ext.util.Observable, {
 
        var tb = g.topToolbar;
           var search1 = new fieldSearch(tb,g);
-
 
         }
                       ,beforedestroy: function(g) {
