@@ -11,7 +11,7 @@ set :scm, "git"
 set :user, "dru"
 #set :branch, "origin/master"
 ssh_options[:port] = 73
-set :deploy_via, :remote_cache
+#set :deploy_via, :remote_cache
 
 set :mongrel_conf, "#{current_path}/config/mongrel_cluster.yml"
 
