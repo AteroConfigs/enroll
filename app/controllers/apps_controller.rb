@@ -44,7 +44,7 @@ class AppsController < ApplicationController
     if old_pos != 0
 
       # Now check that the new_pos is not in the zero wait-list
-      @apps = App.wait_list_for_txt_grade(@app.current_grade.to_s, true)
+      @apps = App.wait_list_for_txt_grade(@app.txt_current_grade, true)
       new_pos = @apps[new_pos].wait_list_position
 
       if new_pos == 0
@@ -104,7 +104,7 @@ class AppsController < ApplicationController
       mesg = 'Moved to zero group'
     end
 
-    r = App.normalize_waitlist_for_txt_grade(@app.current_grade.to_s)
+    r = App.normalize_waitlist_for_txt_grade(@app.txt_current_grade)
 
     render :update do |page| 
       page.replace_html('flash-message', mesg)
