@@ -13,11 +13,6 @@ set :user, "dru"
 ssh_options[:port] = 73
 set :deploy_via, :remote_cache
 
-
-# If you aren't deploying to /u/apps/#{application} on the target
-# servers (which is the default), you can specify the actual location
-# via the :deploy_to variable:
-
 set :mongrel_conf, "#{current_path}/config/mongrel_cluster.yml"
 
 role :app, ENV['DEPLOY_TO']
