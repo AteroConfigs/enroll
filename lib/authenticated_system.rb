@@ -6,6 +6,15 @@ module AuthenticatedSystem
       current_user != :false
     end
 
+    def is_admin?
+      if logged_in?
+        if ['dru', 'cnelson'].include? current_user.login
+          return true
+        end
+      end
+      return false
+    end
+
     # Accesses the current user from the session.  Set it to :false if login fails
     # so that future calls do not hit the database.
     def current_user
@@ -34,6 +43,10 @@ module AuthenticatedSystem
       logged_in?
     end
 
+    def admin_authorized?
+      return is_admin?
+    end
+
     # Filter method to enforce a login requirement.
     #
     # To require logins for all actions, use this in your controllers:
@@ -52,6 +65,9 @@ module AuthenticatedSystem
       authorized? || access_denied
     end
 
+    def admin_required
+      admin_authorized? || access_denied
+    end
     # Redirect as appropriate when an access request fails.
     #
     # The default action is to redirect to the login screen.
@@ -89,7 +105,7 @@ module AuthenticatedSystem
     # Inclusion hook to make #current_user and #logged_in?
     # available as ActionView helper methods.
     def self.included(base)
-      base.send :helper_method, :current_user, :logged_in?
+      base.send :helper_method, :current_user, :logged_in?, :is_admin?
     end
 
     # Called from #current_user.  First attempt to login by the user id stored in the session.

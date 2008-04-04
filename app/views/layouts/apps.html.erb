@@ -25,6 +25,10 @@
       <%= link_to "Applications", :action => "index" %>
       | <a href="/waitlist.html">Public Waitlist</a>
       | <%= link_to "Editable Waitlist", :action => "wait_editor" %>
+      | <%= link_to "Bugs?", 'http://enroll.lighthouseapp.com/projects/9585/home', :target => '_blank' %>
+      <% if is_admin? %>
+      | <%= link_to "Users", :action => "index", :controller => 'Users' %>
+      <% end %>
       </p>
   </div>
 <div style="padding-left:20px">

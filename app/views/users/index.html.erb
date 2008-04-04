@@ -1,0 +1,11 @@
+<div id="user-grid"></div>
+<%= ext_datastore_for :user %>
+<% javascript_tag do -%>
+  var user_column_model = new Ext.grid.ColumnModel([
+    {id: 'id', header: "#", width: 20, dataIndex: 'id'},
+    {header: 'Login', width: 40, dataIndex: 'user[login]'},
+    {header: 'Email', dataIndex: 'user[email]'},
+    {header: 'Created At', dataIndex: 'user[created_at]'},
+  ]);
+<% end -%>
+<%= ext_grid_for :user, :element => 'user-grid', :page_size => 25, :height => 628, :width => 800 %>
