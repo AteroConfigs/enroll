@@ -1,4 +1,9 @@
 
+if not ENV['DEPLOY_TO'] 
+  puts "Set your DEPLOY_TO env var before using 'cap'"
+  exit 1
+end
+
 require 'mongrel_cluster/recipes'
 
 set :application, "enroll"
