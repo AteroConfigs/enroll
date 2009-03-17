@@ -46,7 +46,7 @@ class App < ActiveRecord::Base
   end
 
   def self.this_year
-    return 2008
+    return 2009
   end
 
   def current_grade
