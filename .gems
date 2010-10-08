@@ -1,8 +1,8 @@
-activesupport-2.0.2
-activerecord-2.0.2
-actionpack-2.0.2
-actionmailer-2.0.2
-activeresource-2.0.2
-rails-2.0.2
+activesupport --version 2.0.2
+activerecord --version 2.0.2
+actionpack --version 2.0.2
+actionmailer --version 2.0.2
+activeresource --version 2.0.2
+rails --version 2.0.2
 pg
 postgres
