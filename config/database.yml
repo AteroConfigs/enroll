@@ -5,7 +5,8 @@ development:
   database: CLC
   username: clc
   host: localhost
-  socket: /var/run/mysqld/mysqld.sock
+  socket1: /var/run/mysqld/mysqld.sock
+  socket: /opt/local/var/run/mysql5/mysqld.sock 
   timeout: 5000
 
 # Warning: The database defined as 'test' will be erased and
@@ -17,6 +18,11 @@ test:
   timeout: 5000
 
 production:
-  adapter: sqlite3
-  database: db/production.sqlite3
+  adapter: mysql
+  database: CLC
+  username: clc
+  host: localhost
+  socket1: /var/run/mysqld/mysqld.sock
+  socket: /opt/local/var/run/mysql5/mysqld.sock 
   timeout: 5000
+
