@@ -42,7 +42,16 @@ module ExtScaffoldCoreExtensions
               ActiveSupport::JSON::decode(params[:fields]).each do |field|
                 field.sub!(/(\A[^\[]*)\[([^\]]*)\]/,'\2') # fields may be passed as "object[attr]"
                 next unless model_klass.nil? || model_klass.column_names.include?(field) # accept only valid column names
-                search_conditions << "#{field} LIKE :query"
+
+                if model_klass.connection.adapter_name == "PostgreSQL"
+                  if model_klass.columns_hash[field].type == :string
+                    search_conditions << "UPPER(#{field}) LIKE UPPER(:query)"
+                  else
+                    search_conditions << "UPPER(CAST(#{field} as TEXT)) LIKE UPPER(:query)"
+                  end
+                else
+                  search_conditions << "#{field} LIKE :query"
+                end
               end
             end
             
