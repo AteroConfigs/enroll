@@ -22,7 +22,7 @@
   <div id="info">
       <h3> Current Year: <%= App.this_year %></h3>
       <p>
-      <%= link_to "Applications", :action => "index" %>
+      <%= link_to "Applications", :action => "index", :controller => 'Apps' %>
       | <a href="/waitlist.html">Public Waitlist</a>
       | <%= link_to "Editable Waitlist", :action => "wait_editor" %>
       | <%= link_to "Bugs?", 'http://enroll.lighthouseapp.com/projects/9585/home', :target => '_blank' %>
