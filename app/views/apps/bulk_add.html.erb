@@ -1,0 +1,7 @@
+<% form_tag('/apps/upload', :multipart => true) do -%>
+  <p>
+  <label for="upload_file">Select File</label> : 
+  <%= file_field 'upload', 'datafile' %>
+  </p>
+<p><%= submit_tag 'Upload CSV' %></p>
+<% end -%>

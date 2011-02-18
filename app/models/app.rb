@@ -149,6 +149,91 @@ class App < ActiveRecord::Base
     return 1
 
   end
+
+  def self.display_headers
+    %w( first_name last_name application_date orientation_date
+tour_date code txt_current_grade txt_status txt_type
+street_1 street_2 city state zip father_first_name
+father_last_name father_phone_cell father_phone_home father_phone_work
+father_email_home father_email_work father_street_1 father_street_2
+father_city father_state father_zip mother_first_name mother_last_name
+mother_phone_cell mother_phone_home mother_phone_work mother_email_home
+mother_email_work mother_street_1 mother_street_2 mother_city mother_state
+mother_zip notes siblings birthdate)
+  end
+
+  def self.required_headers
+    %w( first_name last_name application_date orientation_date
+tour_date code grade
+street_1 street_2 city state zip father_first_name
+father_last_name father_phone_cell father_phone_home father_phone_work
+father_email_home father_email_work father_street_1 father_street_2
+father_city father_state father_zip mother_first_name mother_last_name
+mother_phone_cell mother_phone_home mother_phone_work mother_email_home
+mother_email_work mother_street_1 mother_street_2 mother_city mother_state
+mother_zip notes siblings birthdate)
+  end
+
+  def self.import_from_csv(file_obj)
+    require 'fastercsv'
+    csv = FasterCSV.new(file_obj, { :headers => true})
+    const_headers = %w( status sequence_number wait_list_position )
+    headers = required_headers
+    special_csv_header = [ 'grade', 'In District?' ]
+    grade_mapping = { 
+      'k' => 0,
+      '1' => 1,
+      '2' => 2,
+      '3' => 3,
+      '4' => 4,
+      '5' => 5,
+      '6' => 6,
+      '7' => 7,
+      '8' => 8,
+    }
+    data = []
+    csv.each do |row|
+      next if row['first_name'].nil?
+      r = {}
+      begin
+        row.each_with_index do |fld,idx|
+          r['status'] = 0
+          if headers.include? fld[0]
+            r[fld[0]] = fld[1]
+          end
+          if fld[0] == 'grade' && fld[0]
+            r['grade'] = grade_mapping[fld[1].downcase]
+            r['grade_in_year'] = self.this_year
+          end
+          if fld[0] == 'In District?'
+            if fld[1]
+              r['priority_type'] = (fld[1].upcase[0...1] == "Y" ? 3 : 4)
+            else
+              r['priority_type'] = 3
+            end
+          end
+        end
+        data << r
+      rescue Exception => e
+        p row
+        p r
+        raise
+      end
+    end
+    bulks = data.map { |h| Bulk.new(h) }
+    if bulks.any? { |a| not a.valid? }
+      return ['fail', (bulks.find { |a| not a.valid? }).errors.inspect ]
+    end
+
+    if Bulk.count > 0
+      return ['fail', "Previous upload not cleared - preventing duplication" ]
+    end
+
+    bulks.each { |b| b.save! }
+
+    return ['ok', "saved bulk upload" ]
+  end
+
 end
 
 App.inheritance_column = 'blblblb'

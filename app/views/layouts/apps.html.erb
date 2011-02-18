@@ -25,19 +25,22 @@
       <%= link_to "Applications", :action => "index", :controller => 'Apps' %>
       | <a href="/waitlist.html">Public Waitlist</a>
       | <%= link_to "Editable Waitlist", :action => "wait_editor" %>
-      | <%= link_to "Bugs?", 'http://enroll.lighthouseapp.com/projects/9585/home', :target => '_blank' %>
+      | <%= link_to "Bulk Add", :action => "bulk_add", :controller => 'Apps' %>
+      <!-- | <%= link_to "Bugs?", 'http://enroll.lighthouseapp.com/projects/9585/home', :target => '_blank' %> -->
       <% if is_admin? %>
       | <%= link_to "Users", :action => "index", :controller => 'Users' %>
       <% end %>
       </p>
   </div>
 <div style="padding-left:20px">
-<div style="height:20px">
-<p style="color: green" id="flash-message"><%= flash[:notice] %></p>
+<% if flash[:notice] %>
+<div style="height:56px; padding: 5px; padding-right: 20px;">
+<p style="color: green; font-size: 18px; border: 1px solid green; background-color: #dfd; padding: 8px; margin: 5px 0;" id="flash-message"><%= flash[:notice] %></p>
 <% javascript_tag do -%>
-  setTimeout(function() { new Effect.Fade("flash-message",{}); }, 2000);
+  setTimeout(function() { new Effect.Fade("flash-message",{}); }, 300000);
 <% end -%>
 </div>
+<% end %>
 <%= yield  %>
 </div>
 

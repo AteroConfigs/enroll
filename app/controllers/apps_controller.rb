@@ -219,6 +219,66 @@ class AppsController < ApplicationController
     end
   end
   
+  # GET /apps/bulk_add
+  def bulk_add
+    # bulk_add.html.erb
+  end
+
+  # POST /apps/upload
+  def upload
+    require 'fastercsv'
+    p params
+    p params[:upload][:datafile].class
+    if params[:upload][:datafile] == ""
+      flash.now[:notice] = 'Invalid file for bulk_add.'
+      render :action => 'bulk_add'
+      return
+    end
+    p params[:upload][:datafile]
+    result = App.import_from_csv(params[:upload][:datafile])
+    if result[0] == 'fail'
+      flash.now[:notice] = "Error: #{result[1]}"
+      render :action => 'bulk_add'
+      return
+    end
+    # bulk_add.html.erb
+    redirect_to '/apps/bulk_view'
+  end
+
+  # GET /apps/bulk_view
+  def bulk_view
+    # bulk_view.html.erb
+    @data = Bulk.find :all
+  end
+
+
+  # GET /apps/commit
+  def commit
+    # bulk_add.html.erb
+    p params
+    if params["commit"]
+      if params["commit"] == "Import"
+        @data = Bulk.find :all
+        @data.each {
+          |b|
+          a = App.new(b.attributes)
+          a.wait_list_position = 0
+          a.save!
+        }
+        Bulk.destroy_all
+        flash[:notice] = "Added #{@data.length} records"
+        return redirect_to '/apps'
+      end
+      if params["commit"] == "CANCEL"
+        Bulk.destroy_all
+        flash[:notice] = "Cancelled Import"
+        return redirect_to '/apps/bulk_add'
+      end
+    end
+    redirect_to '/apps/bulk_view'
+  end
+
+
   protected
   
     def find_app

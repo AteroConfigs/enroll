@@ -4,5 +4,6 @@ actionpack --version 2.0.2
 actionmailer --version 2.0.2
 activeresource --version 2.0.2
 rails --version 2.0.2
+fastercsv --version 1.5.4
 pg
 postgres

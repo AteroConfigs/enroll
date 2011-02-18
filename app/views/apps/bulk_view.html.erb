@@ -1,0 +1,25 @@
+<h3><%= @data.length -%> records</h3>
+<table border="1" cellpadding="2"i cellspacing="0">
+  <tr>
+<% App.display_headers.each do |fld| -%>
+  <th style="text-align: center; padding: 2px 3px;"><b><%= fld -%></b></th>
+<% end -%>
+  </tr>
+<% @data.each do |row| -%>
+  <tr>
+    <% App.display_headers.each do |fld| -%>
+      <td style="text-align: center; padding: 2px 3px;"><%= row.send(fld) -%></td>
+    <% end -%>
+  </tr>
+<% end -%>
+</table>
+
+<br />
+
+<% form_tag('/apps/commit', :method => 'get') do -%>
+  <p>
+    <%= submit_tag('CANCEL', :onclick => 'confirm("Are you sure?");') %>
+    <br />
+    <%= submit_tag('Import', :onclick => 'confirm("Are you sure?");') %>
+  </p>
+<% end -%>

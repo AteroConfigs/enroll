@@ -9,6 +9,10 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :apps,  :collection => { :waitlist => :get, 
                                          :wait_editor => :get,
+                                         :bulk_add => :get,
+                                         :upload => :post,
+                                         :bulk_view => :get,
+                                         :commit => :get,
                                          :ungap_list => :post },
                         :member => { :toggle_zero => :post, :update_order => :post }
 
