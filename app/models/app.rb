@@ -182,6 +182,7 @@ mother_zip notes siblings birthdate)
     special_csv_header = [ 'grade', 'In District?' ]
     grade_mapping = { 
       'k' => 0,
+      '0' => 0,
       '1' => 1,
       '2' => 2,
       '3' => 3,
