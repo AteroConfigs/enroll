@@ -85,7 +85,7 @@ class AppsController < ApplicationController
       page.show 'flash-message' 
       page.visual_effect :highlight, 'flash-message' 
       page.call('app_datastore.reload')
-      page.delay(4) do
+      page.delay(30) do
         page.visual_effect :fade, 'flash-message' 
       end
     end 
@@ -111,7 +111,7 @@ class AppsController < ApplicationController
       page.show 'flash-message' 
       page.visual_effect :highlight, 'flash-message' 
       page.call('app_datastore.reload')
-      page.delay(4) do
+      page.delay(30) do
         page.visual_effect :fade, 'flash-message' 
       end
     end 
@@ -139,7 +139,7 @@ class AppsController < ApplicationController
       if (r == 1)
         page.call('app_datastore.reload')
       end
-      page.delay(4) do
+      page.delay(30) do
         page.visual_effect :fade, 'flash-message' 
       end
     end 

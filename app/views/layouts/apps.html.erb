@@ -33,12 +33,14 @@
       </p>
   </div>
 <div style="padding-left:20px">
-<% if flash[:notice] %>
 <div style="height:56px; padding: 5px; padding-right: 20px;">
+<% if flash[:notice] %>
 <p style="color: green; font-size: 18px; border: 1px solid green; background-color: #dfd; padding: 8px; margin: 5px 0;" id="flash-message"><%= flash[:notice] %></p>
+<% else %>
+<p style="color: green; font-size: 18px; border: 1px solid green; background-color: #dfd; padding: 8px; margin: 5px 0; display: none;" id="flash-message"><%= flash[:notice] %></p>
+<% end -%>
 <% javascript_tag do -%>
   setTimeout(function() { new Effect.Fade("flash-message",{}); }, 300000);
-<% end -%>
 </div>
 <% end %>
 <%= yield  %>
