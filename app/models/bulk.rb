@@ -44,6 +44,7 @@ class Bulk < ActiveRecord::Base
   end
 
   def current_grade
+    return -1 if grade.nil?
     return grade + (App.this_year - grade_in_year)
   end
 
