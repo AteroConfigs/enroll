@@ -118,8 +118,11 @@ class App < ActiveRecord::Base
     all_apps = App.wait_list
     my_grades_apps = all_apps[self.current_grade]
 
-
-    self.wait_list_position = my_grades_apps.last.wait_list_position + 1
+    if my_grades_apps.empty?
+      self.wait_list_position = 1
+    else
+      self.wait_list_position = my_grades_apps.last.wait_list_position + 1
+    end
 
     save
   end
